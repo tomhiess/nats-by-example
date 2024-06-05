@@ -154,7 +154,7 @@ service \
   -issuer.seed=AUTH.nk \
   -xkey.seed=$XKEY_SEED \
   -signing.keys=$APP1_PUB:APP1.nk,$APP2_PUB:APP2.nk \
-  -users=users.json &
+  -users=users.json > authenticated-users.nkeys &
 
 sleep 2
 
@@ -170,10 +170,22 @@ echo 'Client request from alice...'
 client \
   -creds=sentinel.creds \
   -user alice \
-  -pass alice
+  -pass alice &
 
-echo 'Client request from bob...'
-client \
-  -creds=sentinel.creds \
-  -user bob \
-  -pass bob
+CLIENT_PID=$!
+
+sleep 5
+
+UNKEY=$(cat authenticated-users.nkeys)
+
+nsc revocations add-user -a APP1 -u $UNKEY
+
+nsc push -a APP1
+
+wait $CLIENT_PID
+
+#echo 'Client request from bob...'
+#client \
+#  -creds=sentinel.creds \
+#  -user bob \
+#  -pass bob

@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -102,7 +101,7 @@ func run() error {
 		// Sign the response with the issuer account.
 		token, err := rc.Encode(issuerKeyPair)
 		if err != nil {
-			log.Printf("error encoding response JWT: %s", err)
+			//log.Printf("error encoding response JWT: %s", err)
 			req.Respond(nil)
 			return
 		}
@@ -114,13 +113,15 @@ func run() error {
 		if len(xkey) > 0 {
 			data, err = curveKeyPair.Seal(data, xkey)
 			if err != nil {
-				log.Printf("error encrypting response JWT: %s", err)
+				//log.Printf("error encrypting response JWT: %s", err)
 				req.Respond(nil)
 				return
 			}
 		}
 
-		log.Print("responding to authorization request")
+		//log.Print("responding to authorization request")
+
+		fmt.Printf("%s\n", userNkey)
 
 		req.Respond(data)
 	}

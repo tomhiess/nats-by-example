@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/nats-io/nats.go"
 )
@@ -42,6 +43,23 @@ func run() error {
 	defer nc.Drain()
 
 	log.Printf("%s connected to %s", user, nc.ConnectedUrl())
+
+	_, err = nc.Subscribe(">", func(msg *nats.Msg) {
+
+	})
+
+	if err != nil {
+		log.Printf("could not subscribe: %s", err)
+		return err
+	}
+
+	for nc.LastError() == nil {
+		time.Sleep(time.Second)
+		log.Printf("waiting for revocation")
+		log.Printf("is connected %v", nc.IsConnected())
+	}
+
+	log.Printf("%s", nc.LastError())
 
 	return nil
 }
